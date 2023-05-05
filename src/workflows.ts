@@ -4,7 +4,7 @@ import type * as userRegistrationActivities from './activities/UserRegistration.
 import type * as appActivities from './activities/App.activity';
 import { UserData } from './configs/models';
 
-const { validateUserDetails: ValidateUserDetails, createUserAccount: CreateUserAccount, sendWelcomeEmail: SendWelcomeEmail, DisplayMessage } = proxyActivities<typeof userRegistrationActivities>({
+const { validateUserDetails, createUserAccount, sendWelcomeEmail, DisplayMessage } = proxyActivities<typeof userRegistrationActivities>({
   startToCloseTimeout: '1 minute',
 });
 
@@ -18,11 +18,11 @@ export async function applicationSetup(env: string): Promise<string> {
 
 export async function userRegisterWorkflow(userData: UserData): Promise<string> {
   try {
-    const isValid = await ValidateUserDetails(userData);
+    const isValid = await validateUserDetails(userData);
     if (!isValid) return await DisplayMessage('Please provide proper data', 'error');
 
-    await CreateUserAccount(userData);
-    await SendWelcomeEmail(userData.email);
+    await createUserAccount(userData);
+    await sendWelcomeEmail(userData.email);
 
     return await DisplayMessage('User Registered Successfully', 'info');
   }

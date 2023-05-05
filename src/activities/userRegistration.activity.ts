@@ -23,7 +23,7 @@ export async function createUserAccount(userData: UserData): Promise<boolean> {
   const fileData = fs.readFileSync(path.join(__dirname, './mock_data.json')).toString('utf-8');
   if (!fileData) return false;
   const dbData = JSON.parse(fileData);
-  
+
   dbData.users?.push(userData);
   fs.writeFileSync(path.join(__dirname, './mock_data.json'), JSON.stringify(dbData), {encoding:'utf8',flag:'w'});
   return true;
@@ -34,5 +34,5 @@ export async function sendWelcomeEmail(email: string): Promise<void> {
 };
 
 export async function DisplayMessage(message: string, type: 'error' | 'info'): Promise<string> {
-  return `${type.toUpperCase}: ${message};`
+  return `${type.toUpperCase()}: ${message};`
 };

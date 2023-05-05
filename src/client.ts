@@ -23,7 +23,7 @@ async function run() {
   // console.log(await appSetup.result());
 
   const handle = await client.workflow.start(userRegisterWorkflow, {
-    args: [{ email: 'aditya@gmail.com', password: 'Test1234!' }],
+    args: [{ email: 'aditya2@gmail.com', password: 'Test1234!' }],
     taskQueue: 'user-registration',
     workflowId: 'user-registration-' + nanoid(),
   });
