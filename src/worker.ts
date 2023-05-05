@@ -1,22 +1,23 @@
 import { Worker } from '@temporalio/worker';
-import * as activities from './activities';
+import * as appActivities from './activities/App.activity';
+import * as userRegistrationActivities from './activities/UserRegistration.activity';
 
 async function run() {
-  // Step 1: Register Workflows and Activities with the Worker and connect to
-  // the Temporal server.
   const worker = await Worker.create({
     workflowsPath: require.resolve('./workflows'),
-    activities,
-    taskQueue: 'hello-world',
+    activities: appActivities,
+    taskQueue: 'app-setup',
   });
-  // Worker connects to localhost by default and uses console.error for logging.
-  // Customize the Worker by passing more options to create():
-  // https://typescript.temporal.io/api/classes/worker.Worker
-  // If you need to configure server connection parameters, see docs:
-  // https://docs.temporal.io/typescript/security#encryption-in-transit-with-mtls
 
-  // Step 2: Start accepting tasks on the `hello-world` queue
   await worker.run();
+
+  const worker2 = await Worker.create({
+    workflowsPath: require.resolve('./workflows'),
+    activities: userRegistrationActivities,
+    taskQueue: 'user-registration',
+  });
+
+  await worker2.run();
 }
 
 run().catch((err) => {
