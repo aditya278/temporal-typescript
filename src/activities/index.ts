@@ -1,5 +1,5 @@
-import type * as userRegistrationActivities from './UserRegistration.activity';
-import type * as appActivities from './App.activity';
+import type * as userRegistrationActivities from './userRegistration.activity';
+import type * as appActivities from './app.activity';
 
 export {
   userRegistrationActivities,

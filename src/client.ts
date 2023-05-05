@@ -1,5 +1,5 @@
 import { Connection, Client } from '@temporalio/client';
-import { applicationSetup, userRegisterWorkflow } from './workflows';
+import { applicationSetup, userAuthenticationWorkflow, userRegisterWorkflow } from './workflows';
 import { nanoid } from 'nanoid';
 
 async function run() {
@@ -12,25 +12,38 @@ async function run() {
   });
 
   // Application Setup Workflow
-  // const appSetup = await client.workflow.start(applicationSetup, {
-  //   args: ['dev'],
-  //   taskQueue: 'app-setup',
-  //   workflowId: 'app-setup-' + nanoid(),
-  // });
-  // console.log(`Started workflow ${appSetup.workflowId}`);
+  const appSetup = await client.workflow.start(applicationSetup, {
+    args: ['dev'],
+    taskQueue: 'app-setup',
+    workflowId: 'app-setup-' + nanoid(),
+  });
+  console.log(`Started workflow ${appSetup.workflowId}`);
 
-  // // optional: wait for client result
-  // console.log(await appSetup.result());
+  // optional: wait for client result
+  console.log(await appSetup.result());
 
-  const handle = await client.workflow.start(userRegisterWorkflow, {
-    args: [{ email: 'aditya2@gmail.com', password: 'Test1234!' }],
+
+  // User Registration Workflow
+  const userRegistration = await client.workflow.start(userRegisterWorkflow, {
+    args: [{ email: 'aditya3@gmail.com', password: 'Test1234!' }],
     taskQueue: 'user-registration',
     workflowId: 'user-registration-' + nanoid(),
   });
-  console.log(`Started workflow ${handle.workflowId}`);
+  console.log(`Started workflow ${userRegistration.workflowId}`);
 
   // optional: wait for client result
-  console.log(await handle.result());
+  console.log(await userRegistration.result());
+  
+  // User Authentication Workflow
+  const userAuth = await client.workflow.start(userAuthenticationWorkflow, {
+    args: [{ email: 'aditya3@gmail.com', password: 'Test1234!' }],
+    taskQueue: 'user-authentication',
+    workflowId: 'user-authentication-' + nanoid()
+  });
+
+  console.log(`Started workflow ${userAuth.workflowId}`);
+
+  console.log(await userAuth.result());
 }
 
 run().catch((err) => {

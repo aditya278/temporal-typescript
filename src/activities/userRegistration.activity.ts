@@ -2,12 +2,6 @@ import path from "path";
 import { UserData } from "../configs/models";
 import fs from 'fs';
 
-// const dbData = {
-//   users: [
-//     { email: 'aditya@gmail.com', password: 'Test1234!' }
-//   ]
-// }
-
 export async function validateUserDetails(userData: UserData): Promise<boolean> {
   const fileData = fs.readFileSync(path.join(__dirname, './mock_data.json')).toString('utf-8');
   if (!fileData) return false;
@@ -33,6 +27,6 @@ export async function sendWelcomeEmail(email: string): Promise<void> {
   console.log(`Email sent to ${email}! Welcome to the Application!`);
 };
 
-export async function DisplayMessage(message: string, type: 'error' | 'info'): Promise<string> {
-  return `${type.toUpperCase()}: ${message};`
+export async function displayMessage(message: string, type: 'error' | 'info'): Promise<string> {
+  return `${type}: ${message};`
 };

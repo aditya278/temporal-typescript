@@ -1,23 +1,30 @@
 import { Worker } from '@temporalio/worker';
-import * as appActivities from './activities/App.activity';
-import * as userRegistrationActivities from './activities/UserRegistration.activity';
+import * as appActivities from './activities/app.activity';
+import * as userRegistrationActivities from './activities/userRegistration.activity';
+import * as userLoginActivities from './activities/userLogin.activity';
 
 async function run() {
-  const worker = await Worker.create({
-    workflowsPath: require.resolve('./workflows'),
-    activities: appActivities,
-    taskQueue: 'app-setup',
-  });
+  const workflowsPath = require.resolve('./workflows');
 
-  await worker.run();
+  const workers = await Promise.all([
+    Worker.create({
+      workflowsPath,
+      activities: appActivities,
+      taskQueue: 'app-setup',
+    }),
+    Worker.create({
+      workflowsPath,
+      activities: userRegistrationActivities,
+      taskQueue: 'user-registration',
+    }),
+    Worker.create({
+      workflowsPath,
+      activities: userLoginActivities,
+      taskQueue: 'user-authentication',
+    }),
+  ]);
 
-  const worker2 = await Worker.create({
-    workflowsPath: require.resolve('./workflows'),
-    activities: userRegistrationActivities,
-    taskQueue: 'user-registration',
-  });
-
-  await worker2.run();
+  await Promise.all(workers.map(w => w.run()));
 }
 
 run().catch((err) => {
